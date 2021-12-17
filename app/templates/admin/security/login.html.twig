@@ -1,0 +1,52 @@
+{% extends 'admin/layout/layout_empty_page.html.twig' %}
+
+{% block title %}Log In{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-xl-5 col-lg-6 col-md-9">
+            <div class="card o-hidden border-0 shadow-lg my-5">
+                <div class="card-body p-6">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="p-10">
+                                <div class="text-center">
+                                    <h1 class="h4 text-gray-900 mb-4">Auth Form</h1>
+                                </div>
+                                <form method="post" class="user">
+
+                                    {% include 'admin/_embed/_utils/_flash_message.html.twig' %}
+
+                                    {% if error %}
+                                        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                                    {% endif %}
+
+                                    <div class="form-outline mt-4">
+                                        <input type="email" class="form-control form-control-user" id="inputEmail"
+                                               name="email" value="{{ last_username }}">
+                                        <label class="form-label" for="inputEmail">Email</label>
+                                    </div>
+                                    <div class="form-outline mt-4">
+                                        <input type="password" class="form-control form-control-user" id="inputPassword"
+                                               name="password">
+                                        <label class="form-label" for="inputPassword">Password</label>
+                                    </div>
+
+                                    <div class="form-check form-switch mt-4">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="rememberMe"
+                                               name="_remember_me">
+                                        <label class="form-check-label" for="rememberMe">Remember Me</label>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary btn-user btn-block mt-4">Login</button>
+
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

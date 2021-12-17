@@ -1,0 +1,75 @@
+
+
+{% macro filterForm(form) %}
+    <div class="form-group row">
+        <div class="col-md-3">{{ label }}:</div>
+        <div class="col-md-9">
+            <div class="form-check">
+                <input type="checkbox" name="{{ name }}" {{ value == curData ? 'checked' }} {{ attributes|join(' ') }}
+                       value="{{ value }}" class="form-check-input">
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+
+
+{% macro checkbox(label, name, value = 1, curData = '', attributes = []) %}
+    <div class="form-group row">
+        <div class="col-md-3">{{ label }}:</div>
+        <div class="col-md-9">
+            <div class="form-check">
+                <input type="checkbox" name="{{ name }}" {{ value == curData ? 'checked' }} {{ attributes|join(' ') }}
+                       value="{{ value }}" class="form-check-input">
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro input(label, name, curData = '', type = 'text', attributes = []) %}
+    <div class="form-group row">
+        <div class="col-md-3 col-form-label">{{ label }}:</div>
+        <div class="col-md-9">
+            <input type="{{ type }}" name="{{ name }}" value="{{ curData }}" class="form-control" {{ attributes|join(' ') }}>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro select(label, name, data, curData, attributes = []) %}
+    <div class="form-group row">
+        <div class="col-md-3 col-form-label">{{ label }}:</div>
+        <div class="col-md-9">
+            <select class="form-control" name="{{ name }}" {{ attributes|join(' ') }}>
+                {% for key, item in data %}
+                <option value="{{ key }}" {{ key == curData ? 'selected' }}>{{ item }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro textarea(label, name, curData, attributes = []) %}
+    <div class="form-group row">
+        <div class="col-md-3 col-form-label">{{ label }}:</div>
+        <div class="col-md-9">
+            <textarea class="form-control" name="{{ name }}" {{ attributes|join(' ') }}>{{ curData }}</textarea>
+        </div>
+    </div>
+{% endmacro %}
+
+{#buttons = ['save', 'cancel', 'saveContinue']#}
+{% macro submitButtons(brand, buttons = ['save', 'cancel']) %}
+    <hr>
+    <div class="form-group field-container">
+        {% if 'saveContinue' in buttons %}
+            <input type="submit" name="saveContinue" value="Save" class="btn btn-sm btn-success mr-2 col-2"
+                   id="saveContinue">
+        {% endif %}
+        {% if 'save' in buttons %}
+            <input type="submit" name="btnSave" value="Save & Close" class="btn btn-sm btn-primary mr-2 col-2">
+        {% endif %}
+        {% if 'cancel' in buttons %}
+            <a class="btn btn-sm btn-warning mr-2 col-2" href="../?brand={{ brand }}">Cancel</a>
+        {% endif %}
+    </div>
+{% endmacro %}

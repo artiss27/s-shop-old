@@ -1,0 +1,9 @@
+{% import "admin/_embed/macro/filter_form.html.twig" as filterForm %}
+
+<div class="collapse mt-3 {{ form.vars.submitted ? 'show' }}" id="filterTable">
+    <div class="filter-table card-body">
+
+      {{ filterForm.draw(form) }}
+
+    </div>
+</div>

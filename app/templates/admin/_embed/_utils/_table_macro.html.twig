@@ -1,0 +1,78 @@
+{#
+Exemple tableData fields {
+    'name':     'Active',                                                         // column name
+    'key':      'active',                                                         // the index of value in the data array
+    'class':    'w-id text-center',                                               // class for add to column (<td> and <th>)
+    'filter':   '|raw',                                                           // any twig filter for set to column
+    'value':    '<input type='checkbox' disabled {{ item.active ? 'checked' }} >' // value or expression (has a higher weight than the key)
+}, #}
+{#
+{% import "macro/table.html.twig" as table %}
+{% set tableData = [
+{'name': 'ID', 'key': 'page_id', 'class': 'w-id text-center'},
+{'name': 'Active', 'key': '', 'class': 'w-id text-center', 'filter': '|raw', 'value': "<input type='checkbox' disabled {{ item.active ? 'checked' }} >"},
+{'name': 'Preview', 'key': '', 'class': 'w-id text-center', 'filter': '|raw', 'value': "<i class='fas fa-eye btn table-btn text-info show-preview'></i>"},
+{'name': 'URL (filename.html)', 'key': 'page_url'},
+{'name': 'Description', 'key': 'description'},
+] %}
+{{ table.simpleTable(tableData, data, 'page_id', {copy: true, edit: true, delete: true}) }}
+#}
+{% macro simpleTable(tableData = [], data = [], idKey = '', options = {}) %}
+    {% set edit   = options.edit %}
+    {% set copy   = options.copy %}
+    {% set delete = options.delete %}
+
+    <div class="table-responsive">
+        <table class="table table-sm table-with-hidden-element {{ options.addClassTable }}">
+            <thead>
+            <tr>
+                {% for val in tableData %}
+                    <th class="{{ val.class }}">{{ val.name }}</th>
+                {% endfor %}
+
+                {% if copy %}
+                    <th class="center noExl w-id"></th>
+                {% endif %}
+                {% if edit %}
+                    <th class="center noExl w-id">
+                        <a href="add/" class="operation add" title="Add new"></a>
+                    </th>
+                {% endif %}
+                {% if delete %}
+                    <th class="center noExl w-id"></th>
+                {% endif %}
+            </tr>
+            </thead>
+            {% for item in data %}
+                <tr data-id="{{ item[idKey] }}">
+                    {% for val in tableData %}
+                        {% set value = val.value ? include(template_from_string(val.value)) : item[val.key] %}
+                        <td class="{{ val.class }}">{{ include(template_from_string("{{ value" ~ val.filter ~ " }}")) }}</td>
+                    {% endfor %}
+
+                    {% if copy %}
+                        <td class="noExl w-id text-center">
+                            <a href="add/{{ item[idKey] }}" class="visible-on-hover copy">
+                                <i class="far fa-copy btn table-btn text-success"></i>
+                            </a>
+                        </td>
+                    {% endif %}
+                    {% if edit %}
+                        <td class="noExl w-id text-center">
+                            <a href="edit/{{ item[idKey] }}" class="visible-on-hover">
+                                <i class="fas fa-pencil-alt btn table-btn text-primary"></i>
+                            </a>
+                        </td>
+                    {% endif %}
+                    {% if delete %}
+                        <td class="noExl w-id text-center">
+                            <a href="delete/{{ item[idKey] }}" class="operation del visible-on-hover">
+                                <i class="fas fa-times-circle btn table-btn text-danger"></i>
+                            </a>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endmacro %}

@@ -1,0 +1,39 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}
+    Admin - {% block title_detailed %} {% endblock %}
+{% endblock %}
+
+{% block layout_body %}
+    <body>
+
+    {% set ROUTE_NAME = app.request.attributes.get('_route') %}
+
+    <header>
+        {{ include('admin/_embed/_main/_sidebar.html.twig') }}
+
+        {{ include('admin/_embed/_main/_topbar.html.twig') }}
+    </header>
+
+    <main style="margin-top: 58px">
+        <div class="container pt-4">
+            {% include 'admin/_embed/_utils/_flash_message.html.twig' %}
+
+            {% block body %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="bg-light text-center">
+        <div class="text-center p-1" style="background-color: rgba(0, 0, 0, 0.05);">
+            © {{ 'now'|date('Y') }} Copyright:
+            <a class="text-reset fw-bold" href="#">MDBootstrap.com</a>
+        </div>
+    </footer>
+
+    {# <a class="scroll-to-top rounded" href="#page-top"> #}
+    {# <i class="fas fa-angle-up"></i> #}
+    {# </a> #}
+
+    {% block javascripts %}{% endblock %}
+    </body>
+{% endblock %}

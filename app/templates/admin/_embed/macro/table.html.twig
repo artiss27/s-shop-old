@@ -1,0 +1,57 @@
+{#
+Exemple tableData fields {
+    'name':     'Active',                                                         // column name
+    'key':      'active',                                                         // the index of value in the data array
+    'class':    'w-id text-center',                                               // class for add to column (<td> and <th>)
+    'filter':   '|raw',                                                           // any twig filter for set to column
+    'value':    '<input type='checkbox' disabled {{ item.active ? 'checked' }} >' // value or expression (has a higher weight than the key)
+}, #}
+{% macro draw(tableData = [], data = [], idKey = '', options = {}) %}
+    {% set edit     = options.edit|default('') %}
+    {% set copy     = options.copy|default('') %}
+    {% set delete   = options.delete|default('') %}
+    {% set actions  = (edit) or (copy) or (delete) %}
+
+    <div class="table-responsive">
+        <table class="table table-sm table-hover {{ options.addClassTable|default('') }}">
+            <thead>
+            <tr>
+                {% if actions %}
+                    <th></th>
+                {% endif %}
+
+                {% for val in tableData %}
+                    <th class="{{ val.class|default('') }}">{{ val.name|raw }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            {% for item in data %}
+                <tr>
+                    {% if actions %}
+                        <td>
+                            {% set editItemMenu = 'editItemMenu' ~ item.id %}
+                            <ul class="navbar-nav ms-auto d-flex flex-row">
+                                <li class="nav-item dropdown">
+                                    <button type="button" class="btn btn-sm btn-link btn-floating"
+                                       id="{{ editItemMenu }}" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v act"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="{{ editItemMenu }}">
+                                        {% if edit %}<li><a class="dropdown-item act" href="{{ path(edit, {'id': item.id}) }}"><i class="fas fa-pencil-alt"></i> Edit</a></li>{% endif %}
+                                        {% if copy %}<li><a class="dropdown-item act" href="{{ path(copy, {'id': item.id}) }}"><i class="far fa-copy"></i> Copy</a></li>{% endif %}
+                                        {% if delete %}<li><a class="dropdown-item act" href="{{ path(delete, {'id': item.id}) }}"><i class="far fa-trash-alt"></i> Delete</a></li>{% endif %}
+                                    </ul>
+                                </li>
+                            </ul>
+                        </td>
+                    {% endif %}
+
+                    {% for val in tableData %}
+                        {% set value = val.value is defined ? include(template_from_string(val.value)) : attribute(item, val.key) %}
+                        <td class="{{ val.class|default('') }}">{{ val.filter is defined ? include(template_from_string("{{ value" ~ val.filter ~ " }}")) : value }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endmacro %}

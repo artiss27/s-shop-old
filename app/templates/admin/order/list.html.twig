@@ -1,0 +1,52 @@
+{% extends 'admin/layout/layout_main.html.twig' %}
+
+{% block title_detailed %}All Orders{% endblock %}
+
+{% import "admin/_embed/macro/table.html.twig" as table %}
+
+{% block body %}
+
+    <section class="mb-4">
+        <div class="card">
+
+            {% include 'admin/_embed/_card/_header_action.html.twig' with {
+                'sectionTitle': 'Orders',
+                'addUrl': path('admin_order_add'),
+                'filter': form
+            } %}
+
+            <div class="card-body">
+
+                {% set tableData = [
+                    {'name': 'Id', 'key': 'id', 'class': 'text-center'},
+                    {'name': knp_pagination_sortable(pagination, 'Status', 'o.status'), 'key': 'getOrderStatusName'},
+                    {'name': knp_pagination_sortable(pagination, 'Created', 'o.createdAt'), 'key': 'createdAt', 'filter': '|date("d-m-Y H:i")'},
+                    {'name': 'Count', 'key': 'getProductsArray', 'class': 'text-center', 'filter': '|length'},
+                    {'name': 'Total', 'key': 'totalPrice', 'filter': '|format_currency("USD")'},
+                    {'name': 'User', 'key': 'getOwnerNameAndEmail'},
+                ] %}
+                {{ table.draw(tableData, pagination, 'id', {edit: 'admin_order_edit', delete: 'admin_order_delete'}) }}
+
+                <div class="navigation">{{ knp_pagination_render(pagination) }}</div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+      /*window.addEventListener('load', function () {
+        VirtualSelect.init({
+                             ele: '#order_filter_form_owner',
+                             name: 'name1',
+                             search: true,
+                             options: [
+                               { label: 'Options 1Options 1Options 1', value: '1' },
+                               { label: 'Options 2', value: '2' },
+                               { label: 'Options 3', value: '3' },
+                             ],
+                           });
+      })*/
+    </script>
+{% endblock %}

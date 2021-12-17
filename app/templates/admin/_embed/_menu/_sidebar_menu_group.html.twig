@@ -1,0 +1,32 @@
+{% set group_name = group.name|lower %}
+{% set group_active = '' %}
+
+{% set sub_menu %}
+    {% for elem in routes %}
+        {% set active  = ROUTE_NAME in elem.route ? 'active' : '' %}
+        {% set group_active = group_active ?: active %}
+{#        <a href="{{ path(elem.route[0]) }}"#}
+{#           class="ps-5 list-group-item list-group-item-action py-1 ripple {{ active }}">#}
+{#            <i class="{{ elem.icon }} me-3"></i><span>{{ elem.name }}</span>#}
+{#        </a>#}
+        <li class="sidenav-item">
+            <a class="sidenav-link" href="{{ path(elem.route[0]) }}"><i class="{{ elem.icon }} me-3"></i>{{ elem.name }}</a>
+        </li>
+    {% endfor %}
+{% endset %}
+
+{#<a href="#menu-group-{{ group_name }}" class="list-group-item list-group-item-action py-1 ripple"#}
+{#   data-mdb-toggle="collapse"#}
+{#   aria-expanded="{{ group_active ? 'true' : '' }}"#}
+{#   aria-controls="menu-group-{{ group_name }}">#}
+{#    <i class="{{ group.icon }} me-3"></i><span>{{ group.name }}</span>#}
+{#</a>#}
+
+{#<div id="menu-group-{{ group_name }}" class="collapse {{ group_active ? 'show' : '' }}">#}
+{#    {{ sub_menu }}#}
+{#</div>#}
+
+<li class="sidenav-item">
+    <a class="sidenav-link"><i class="{{ group.icon }} fa-fw me-3"></i><span>{{ group.name }}</span></a>
+    <ul class="sidenav-collapse">{{ sub_menu }}</ul>
+</li>

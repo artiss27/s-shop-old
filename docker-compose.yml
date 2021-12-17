@@ -1,0 +1,142 @@
+version: '3'
+services:
+    nginx:
+        container_name: ${APP_PROJECT_NAME}_nginx
+        build:
+            context: ${APP_PATH}/.docker/development/nginx
+        volumes:
+            - ${APP_PATH}:/app
+            - ${APP_PATH}/.docker/development/nginx/ssl:/etc/nginx/ssl
+            - ./var/logs/nginx:/var/log/nginx
+        depends_on:
+            - php-fpm
+        ports:
+            - ${NGINX_PORT}:80
+            - ${NGINX_PORT_SSL}:443
+    php-fpm:
+        container_name: ${APP_PROJECT_NAME}_php_fpm
+        build:
+            context: ${APP_PATH}/.docker/development/php-fpm
+        volumes:
+            - ${APP_PATH}:/app
+        depends_on:
+            - postgres
+#            - redis
+#            - queue-redis
+#            - storage
+#            - mailer
+#            - centrifugo
+    php-cli:
+        container_name: ${APP_PROJECT_NAME}_php_cli
+        build:
+            context: ${APP_PATH}/.docker/development/php-cli
+        volumes:
+            - ${APP_PATH}:/app
+            - composer:/root/.composer/cache
+        extra_hosts:
+            host.docker.internal: host-gateway
+        depends_on:
+            - postgres
+#            - redis
+#            - queue-redis
+#            - storage
+#            - mailer
+#            - centrifugo
+#    queue-worker:
+#        build:
+#            context: ${APP_PATH}/.docker/development/php_cli
+#            dockerfile: php-cli.docker
+#        volumes:
+#            - ${APP_PATH}:/app
+#            - composer:/root/.composer/cache
+#        depends_on:
+#            - postgres
+#            - redis
+#            - queue-redis
+#            - storage
+#            - mailer
+#            - centrifugo
+#        command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && php bin/console messenger:consume async -vv"
+    node-watch:
+        container_name: ${APP_PROJECT_NAME}_node_watch
+        image: node:16-alpine
+        volumes:
+            - ${APP_PATH}:/app
+        working_dir: /app
+        command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && npm run watch"
+    node:
+        container_name: ${APP_PROJECT_NAME}_node
+        image: node:16-alpine
+        volumes:
+            - ${APP_PATH}:/app
+        working_dir: /app
+    postgres:
+        container_name: ${APP_PROJECT_NAME}_postgres
+        image: postgres:13.4-alpine
+        volumes:
+            - ${APP_DB_PATH}:/var/lib/postgresql/data
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_DB: ${POSTGRES_DB}
+        ports:
+            - ${DB_POSTGRES_PORT}:5432
+#    redis:
+#        image: redis:5.0-alpine
+#        volumes:
+#            - redis:/data
+#        command:
+#            - 'redis-server'
+#            - '--databases 2'
+#            - '--save 900 1'
+#            - '--save 300 10'
+#            - '--save 60 10000'
+#            - '--requirepass secret'
+#    queue-redis:
+#        image: redis:5.0-alpine
+#        volumes:
+#            - queue-redis:/data
+#
+#    storage:
+#        build:
+#            context: ./storage/.docker/development
+#            dockerfile: nginx.docker
+#        volumes:
+#            - ./storage:/app
+#        ports:
+#            - "8081:80"
+#    storage-ftp:
+#        image: stilliard/pure-ftpd
+#        environment:
+#            FTP_USER_NAME: app
+#            FTP_USER_PASS: secret
+#            FTP_USER_HOME: /app
+#        volumes:
+#            - ./storage/public:/app
+
+#    mailer:
+#        image: mailhog/mailhog
+#        ports:
+#            - "8082:8025"
+
+#    centrifugo:
+#        image: centrifugo/centrifugo:v2.2
+#        ulimits:
+#            nofile:
+#                soft: 65536
+#                hard: 65536
+#        environment:
+#            CENTRIFUGO_SECRET: secret
+#            CENTRIFUGO_API_KEY: secret
+#        volumes:
+#            - ./centrifugo/docker/development/centrifugo:/centrifugo
+#        ports:
+#            - "8083:8000"
+#        command: centrifugo --admin --admin_insecure
+
+# все что описываем в volumes не удаляется после удаления контейнера
+volumes:
+    postgres:
+#    redis:
+#    queue-redis:
+    composer:

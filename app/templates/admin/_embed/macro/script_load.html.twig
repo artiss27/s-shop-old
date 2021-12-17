@@ -1,0 +1,39 @@
+{#
+url  = []
+type = 'js' or 'css'
+#}
+{% macro load(urls = [], setTime = false, type = 'js') %}
+    {% for url in urls %}
+        {% if type == 'js' %}
+            <script src="{{ getFileUrl(url, setTime) }}"></script>
+        {% else %}
+            <link rel="stylesheet" href="{{ getFileUrl(url, setTime) }}">
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro add_js_var(name, value) %}
+    <script>
+        {% if (instanceof(value, 'array') or instanceof(value, 'bool')) %}
+            const {{ name }} = {{ value|json_encode()|raw }};
+        {% elseif instanceof(value, 'int') %}
+            const {{ name }} = {{ value|raw }};
+        {% else %}
+            const {{ name }} = '{{ value|raw }}';
+        {% endif %}
+    </script>
+{% endmacro %}
+
+{% macro add_js_vars(data) %}
+    <script>
+        {% for name, value in data %}
+            {% if (instanceof(value, 'array') or instanceof(value, 'bool')) %}
+                const {{ name }} = {{ value|json_encode()|raw }};
+            {% elseif instanceof(value, 'int') %}
+                const {{ name }} = {{ value|raw }};
+            {% else %}
+                const {{ name }} = '{{ value|raw }}';
+            {% endif %}
+        {% endfor %}
+    </script>
+{% endmacro %}

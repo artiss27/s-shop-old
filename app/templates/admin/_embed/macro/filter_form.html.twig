@@ -1,0 +1,30 @@
+{% form_theme form 'form/fields.html.twig' %}
+
+{% macro draw(form) %}
+
+    {{ form_start(form, { 'attr' : { 'class': 'row gy-2 gx-3 align-items-center app-filter-form' }}) }}
+
+    {% for el in form %}
+        {% set type = el.vars.block_prefixes.1 %}
+        {% if type != 'hidden' %}
+
+{#            {{ dump(el) }}#}
+            <div class="col-auto">
+                <div class="input-group">
+                    {{ form_label(el) }}
+                    {{ form_widget(el) }}
+                </div>
+            </div>
+
+        {% endif %}
+    {% endfor %}
+
+    <div class="col-auto">
+        <button type="submit" class="btn btn-outline-primary">Submit</button>
+    </div>
+    <div class="col-auto">
+        <a href="{{ path(app.request.attributes.get('_route')) }}" class="btn btn-outline-warning">Reset</a>
+    </div>
+
+    {{ form_end(form) }}
+{% endmacro %}
